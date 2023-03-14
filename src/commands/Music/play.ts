@@ -91,8 +91,16 @@ export class PlayCommand extends Command {
 			return;
 		  }
         const player = useMasterPlayer();
-        const text = await args.rest('string');
+
+
+        const text = await args.rest('string').catch(() => '');
         const member = message.member as GuildMember;
+
+        if(text == ''){
+            return send(message, {
+                content: 'No arguments',
+            });
+        }
 
         const { track, searchResult } = await player!.play(member.voice.channel!, text, {
             nodeOptions: {
@@ -124,7 +132,7 @@ export class PlayCommand extends Command {
         return new EmbedBuilder()
                 .setTitle(track.title)
                 .setURL(track.url)
-                .setAuthor(track.requestedBy ? { name: track.requestedBy?.username } : null)
+                .setAuthor({ name: track.author })
                 .setColor(15007566)
                 .setDescription(`**Duration** ${track.duration}`)
                 .setFooter({

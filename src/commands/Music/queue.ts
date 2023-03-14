@@ -22,9 +22,9 @@ export class PauseCommand extends Command {
     public override async chatInputRun(interaction: Command.ChatInputCommandInteraction) {
         const queue = useQueue(interaction.guild!.id);
 
-        if(!queue || !queue.currentTrack){
+        if(!queue || !queue.currentTrack || queue.tracks.toArray().length == 0){
             interaction.reply({ 
-                content: `I am **not** in a voice channel or there are no current tracks playing`, 
+                content: `I am **not** in a voice channel or there are no current tracks playing or there's nothing on the queue`, 
                 ephemeral: true 
             })
             return;
@@ -36,9 +36,9 @@ export class PauseCommand extends Command {
     public async messageRun(message: Message) {
         const queue = useQueue(message.guild!.id);
 
-        if(!queue || !queue.currentTrack){
+        if(!queue || !queue.currentTrack || queue.tracks.toArray().length == 0){
             return send(message, { 
-                content: `I am **not** in a voice channel`, 
+                content: `I am **not** in a voice channel or there are no current tracks playing or there's nothing on the queue`, 
             })
         }
         
@@ -52,7 +52,7 @@ export class PauseCommand extends Command {
 
         trackPages.forEach(tracks => {
             const songs = tracks.map((track) => {
-                return `${queue.tracks.toArray().indexOf(track) + 1}) [${track.toString}](${
+                return `${queue.tracks.toArray().indexOf(track) + 1}) [${track.toString()}](${
                     track.url
                 }) \n`;
             });
